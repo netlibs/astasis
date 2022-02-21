@@ -1,0 +1,36 @@
+plugins {
+  id 'rtfs.events.java-common-conventions'
+}
+
+configurations {
+  immutablesAnnotationProcessor
+}
+
+dependencies {
+
+  immutablesAnnotationProcessor astasisLibs.immutables.valueProcessor
+
+  compileOnly astasisLibs.immutables.valueAnnotations
+  compileOnly astasisLibs.javax.annotation
+  
+  // applied for eclipse.
+  annotationProcessor astasisLibs.immutables.valueProcessor
+  
+}
+
+task immutables(type: JavaCompile, group: 'build', description: 'Generates the immutables.org types') {
+  source = sourceSets.main.java
+  classpath = configurations.compileClasspath
+  options.annotationProcessorPath = configurations.immutablesAnnotationProcessor             
+  options.compilerArgs = [ '-proc:only', '-implicit:none' ]    
+  destinationDir = file("$buildDir/generated/sources/immutables")
+}
+
+tasks.named('javadoc', Javadoc) {
+  source = [
+    file("$buildDir/generated/sources/immutables"),
+    sourceSets.main.allJava,
+  ]
+  dependsOn immutables
+}
+

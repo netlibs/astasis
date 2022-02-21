@@ -1,0 +1,15 @@
+plugins {
+  id "com.google.osdetector" apply false
+  id "me.champeau.gradle.japicmp" apply false
+  id "net.ltgt.errorprone" apply false
+  id 'com.diffplug.eclipse.apt' apply false
+  id 'eclipse'
+}
+
+task configureBuildship {
+  dependsOn gradle.includedBuilds*.task(':configureBuildship')
+}
+
+eclipse {
+  synchronizationTasks configureBuildship
+}

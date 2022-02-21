@@ -1,0 +1,49 @@
+
+
+# Declarative Asterisk Graphs
+
+Each AStG instance contains a graph which defines the current desired state of the asterisk instance.  AStG takes
+this graph and attempts to apply it.
+
+note that the AStG graph is a low level one which presents asterisk internals - higher level platform components take
+application layer models and generate these graphs.
+
+AStG deal in channels, bridges, and high level endpoints (RTFS endpoints, not SIP directly).  AStG converts these
+endpoints to underlying asterisk ones as needed.
+
+Having this lower level graph allows us to orchestrate logic across multiple AStG instances within a group.  For example, 
+an agent with a channel on one AStG instance can connect to a caller on another by generating a graph for each instance
+and then applying them, with a channel connecting the two together (e.g, over SIP).
+
+This does not excuse constant multi-instance graphs - in general we try and keep channels on the same instance;  however there
+are some legitimate scenarios where we have no choice but to work with channels which span instances.
+
+If a channel can be REFERed w/Replaces, we can perform a complete offload by generating a graph on a new instance, bridging it in, 
+and then generating a new channel on the replacement instance.
+
+##
+
+```
+
+FRAME PstnOut:
+  
+
+
+[channel] -> (callingTo) -> [target]
+
+
+
+
+
+
+```
+
+
+## Use Cases
+
+- remote pickup
+- eavesdrop/whisper
+- call recording
+- call handoff
+- dynamic location addition
+
