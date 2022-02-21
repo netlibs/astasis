@@ -52,6 +52,18 @@ eclipse {
 }
 
 
+  
+eclipse.classpath.file.whenMerged { classpath ->
+  classpath.entries.find { it.path == '.apt_generated' }.each {
+    classpath.entries.remove(it)
+  }
+  // ignore compilation warnings in the apt-generated code		
+  def lib = new org.gradle.plugins.ide.eclipse.model.SourceFolder('.apt_generated', null)
+  lib.entryAttributes['ignore_optional_problems'] = true
+  lib.entryAttributes['optional'] = true
+  classpath.entries.add(lib) 
+} 
+
 
 def createProjectDisplayName() {
   if (project == project.rootProject) {
